@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="overlay" data-visible="true"></div>
+  <div class="overlay" data-visible="false"></div>
   <div class="banner">    
       <div class="banner--title">
         <!-- <h3>Oh no, you lost / You won!</h3>
@@ -58,9 +58,9 @@
           <button class="btn dark-blue">NEW GAME (vs PLAYER)</button>
         </div>
       </div>
-      <div class="board">
+      <div class="board" data-game="inactive">
         <div class="board--navigation">
-          <div class="menu--logo logo">
+          <div class="board--navigation__menu menu--logo logo">
             <div class="menu--logo--x">
               <img src="./assets/icon-x.svg" alt="x">
             </div>
@@ -74,8 +74,8 @@
             </div>
             <h4>TURN</h4>
           </div>
-          <div>
-            <button class="btn light-white" type="reset">
+          <div class="board--navigation__restart">
+            <button class=" btn light-white" type="reset">
               <img src="../assets/icon-restart.svg" alt="reset button"/>
             </button>
           </div>
@@ -83,20 +83,20 @@
         </div>
         <!-- how to map this into array in JS? -->
         <div class="board--panels">
-          <div class="panel"></div>
-          <div class="panel"></div>
+          <div class="panel">o</div>
+          <div class="panel">o</div>
           <div class="panel"></div>
           
           <div class="panel"></div>
-          <div class="panel"></div>
+          <div class="panel">0</div>
           <div class="panel"></div>
 
           <div class="panel"></div>
           <div class="panel"></div>
-          <div class="panel"></div>
+          <div class="panel">0</div>
         </div>
         <div class="board--results">
-          <div class="result light-blue">
+          <div class="result dark-blue">
             <p class="result--player">X (YOU)</p>
             <p class="result--score">14</p>
           </div>
