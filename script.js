@@ -49,19 +49,7 @@ newGameCPU.addEventListener('click', () => {
     game.isCPUPlaying = true;
     game.player = xButton.dataset.selected === 'true' ? 'X' : 'O';
     game.cpu = game.player === 'X' ? 'O' : 'X';
-    console.log('player mark: ', game.player);
-    console.log('cpu mark: ', game.cpu);
-    // if cpu is X make first move
-
-    if(game.cpu === 'X'){
-        const cpu = game.cpuMove();
-        setTimeout(() => {
-            pannels[cpu.row * 3 + cpu.col].innerHTML = cpu.mark === 'O' ? `<img src="${oMark}" alt="O Mark">` : `<img src="${xMark}" alt="X Mark">`;
-            game.togglePlayer();
-            // set turn info
-            game.currentPlayer === 'O' ? playerTurnImage.src = './assets/icon-o.svg' : playerTurnImage.src = './assets/icon-x.svg';
-        }, 500);
-    }
+    cpuFirstMove();
 });
 
 quitButton.addEventListener('click', () => {
@@ -73,7 +61,6 @@ restartButton.addEventListener('click', () => {
 });
 
 nextRoundButton.addEventListener('click', () => {
-    // Reset the game state
     game.board = [
         ['', '', ''],
         ['', '', ''],
@@ -82,23 +69,20 @@ nextRoundButton.addEventListener('click', () => {
     game.currentPlayer = 'X';
     game.isGameOver = false;
 
-    // Clear the board UI
     pannels.forEach(panel => {
         panel.innerHTML = '';
     });
 
-    // Hide the banner and overlay
     ovrerlay.dataset.visible = 'false';
     banner.style.display = 'none';
 
-    // Set the turn indicator to the starting player
     playerTurnImage.src = './assets/icon-x.svg';
 
-    //update score
     scoreX.innerHTML = game.gameStats.XWins;
     scoreO.innerHTML = game.gameStats.OWins;
     scoreDraw.innerHTML = game.gameStats.Draws;
-    console.log(game.gameStats);
+
+    cpuFirstMove();
 });
 
 pannels.forEach((panel, index) => {
@@ -106,8 +90,6 @@ pannels.forEach((panel, index) => {
         if(game.isGameOver || game.board[Math.floor(index / 3)][index % 3] !== ''){
             return;
         }
-
-        //prevent marking when cpu is playing and it's cpu turn
         if(game.isCPUPlaying && game.currentPlayer === game.cpu){
             return;
         }
@@ -118,28 +100,28 @@ pannels.forEach((panel, index) => {
             panel.innerHTML = `<img src="${xMark}" alt="X Mark">`;
 
         game.board[Math.floor(index / 3)][index % 3] = game.currentPlayer;
-        console.log(game.board);
-
         const result = game.checkWin();
+        console.log('Player result: ', result);
+
         if(result){
             setTimeout(() => {
                 winBanner(result);
             }, 500);
             game.updateScore();
         } else {
-            // set player turn
             const player = game.togglePlayer();
+            updateTurnInfo();
 
-            // if cpu is playing
             if(game.isCPUPlaying && player === game.cpu){
-                console.log('cpu mark: ', game.cpu);
                 const cpu = game.cpuMove();
                 setTimeout(() => {
-                    pannels[cpu.row * 3 + cpu.col].innerHTML = cpu.mark === 'O' ? `<img src="${oMark}" alt="O Mark">` : `<img src="${xMark}" alt="X Mark">`;
+                    updatePannelImage(cpu);
                     game.togglePlayer();
+                    updateTurnInfo();
                 }, 500);
                 
                 const cpuResult = game.checkWin();
+                console.log('CPU result: ', cpuResult);
                 if(cpuResult){
                     setTimeout(() => {
                         winBanner(cpuResult);
@@ -148,9 +130,6 @@ pannels.forEach((panel, index) => {
                 }
             }
         }
-
-        // set turn info
-        game.currentPlayer === 'O' ? playerTurnImage.src = './assets/icon-o.svg' : playerTurnImage.src = './assets/icon-x.svg';
     });
 });
 
@@ -188,4 +167,21 @@ function decisionBanner(decision){
         bannerDecision.style.display = 'flex';
         bannerRestart.style.display = 'none';
     }   
+}
+
+function updateTurnInfo(){
+    game.currentPlayer === 'O' ? playerTurnImage.src = './assets/icon-o.svg' : playerTurnImage.src = './assets/icon-x.svg';
+}
+function updatePannelImage(cpu){
+    pannels[cpu.row * 3 + cpu.col].innerHTML = cpu.mark === 'O' ? `<img src="${oMark}" alt="O Mark">` : `<img src="${xMark}" alt="X Mark">`;
+}
+function cpuFirstMove(){
+    if(game.cpu === 'X'){
+        const cpu = game.cpuMove();
+        setTimeout(() => {
+            updatePannelImage(cpu);
+            game.togglePlayer();
+            updateTurnInfo();
+        }, 500);
+    }
 }
