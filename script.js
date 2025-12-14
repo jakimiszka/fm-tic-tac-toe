@@ -1,28 +1,40 @@
 import { Game } from "./game.js";
 
-const xButton = document.querySelector('.menu--turn__mark--x');
-const oButton = document.querySelector('.menu--turn__mark--o');
-const oMark = './assets/icon-o.svg';
-const xMark = './assets/icon-x.svg';
-const playerTurnImage = document.querySelector('.board--navigation__turn--image img');
-const newGameCPU = document.querySelector('#newGameCPU');
-const newGamePlayer = document.querySelector('#newGamePlayer');
+// CACHE DOM ELEMENTS
+const banner = document.querySelector('.banner');
 const menu = document.querySelector('.menu');
 const board = document.querySelector('.board');
-const pannels = document.querySelectorAll('.board--panels .panel');
-const ovrerlay = document.querySelector('.overlay');
-const banner = document.querySelector('.banner');
+const overlay = document.querySelector('#overlay');
+// MENU - elements
+const menuTurn = menu.querySelector('.menu--turn');
+const xButton = menuTurn.querySelector('.menu--turn__mark--x');
+const oButton = menuTurn.querySelector('.menu--turn__mark--o');
+const oMark = './assets/icon-o.svg';
+const xMark = './assets/icon-x.svg';
+const newGameCPU = menu.querySelector('#newGameCPU');
+const newGamePlayer = menu.querySelector('#newGamePlayer');
+// BANNER - elements
 const bannerDecision = banner.querySelector('.banner--decision');
+const bannerInfo = banner.querySelector('.banner--info');
+const bannerInfoImage = bannerInfo.querySelector('img');
 const bannerRestart = banner.querySelector('.banner--restart');
-
-const quitButton = document.querySelector('.banner_quit');
-const nextRoundButton = document.querySelector('.banner_next');
-const restartButton = document.querySelector('.board--navigation__restart button');
-// check
-const boardResults = document.querySelector('.board--results');
-const scoreX = boardResults.querySelector('.result--score.firstPlayer');
-const scoreO = boardResults.querySelector('.result--score.secondPlayer');
-const scoreDraw = boardResults.querySelector('.result--score.drawScore');
+const restartYesButton = bannerRestart.querySelector('.yes');
+const restartNoButton = bannerRestart.querySelector('.no');
+const quitButton = bannerDecision.querySelector('.banner_quit');
+const nextRoundButton = bannerDecision.querySelector('.banner_next');
+// BOARD - elements
+const playerTurnImage = board.querySelector('.board--navigation__turn--image img');
+const pannels = board.querySelectorAll('.board--panels .panel');
+const restartButton = board.querySelector('#restartButton');
+const boardResults = board.querySelector('.board--results');
+const playerX = boardResults.querySelector('#playerX');
+const playerO = boardResults.querySelector('#playerO');
+const scoreDraw = boardResults.querySelector('#drwas');
+const playerXLabel = playerX.querySelector('#playerX_label');
+const playerOLabel = playerO.querySelector('#playerO_label');
+const drawsScore = scoreDraw.querySelector('#draws_score');
+const playerXScore = playerX.querySelector('#playerX_score');
+const playerOScore = playerO.querySelector('#playerO_score');
 
 const game = new Game();
 
@@ -30,17 +42,23 @@ xButton.addEventListener('click', () => {
     xButton.dataset.selected ='true';
     oButton.dataset.selected ='false';
     game.selectPlayer('X');
+    game.selectPlayer2('O');
 });
 
 oButton.addEventListener('click', () => {
     xButton.dataset.selected = 'false';
     oButton.dataset.selected = 'true';
     game.selectPlayer('O');
+    game.selectPlayer2('X');
 }); 
 
 newGamePlayer.addEventListener('click', () => {
     menu.style.display = 'none';
     board.style.display = 'flex';
+
+    setScoreLabels();
+    setScores();
+
     game.isCPUPlaying = false;
 });
 newGameCPU.addEventListener('click', () => {
@@ -49,6 +67,7 @@ newGameCPU.addEventListener('click', () => {
     game.isCPUPlaying = true;
     game.player = xButton.dataset.selected === 'true' ? 'X' : 'O';
     game.cpu = game.player === 'X' ? 'O' : 'X';
+    setScoreLabels();
     cpuFirstMove();
 });
 
@@ -61,28 +80,21 @@ restartButton.addEventListener('click', () => {
 });
 
 nextRoundButton.addEventListener('click', () => {
-    game.board = [
-        ['', '', ''],
-        ['', '', ''],
-        ['', '', '']
-    ];
-    game.currentPlayer = 'X';
-    game.isGameOver = false;
+    restartGame();
 
-    pannels.forEach(panel => {
-        panel.innerHTML = '';
-    });
-
-    ovrerlay.dataset.visible = 'false';
-    banner.style.display = 'none';
-
-    playerTurnImage.src = './assets/icon-x.svg';
-
-    scoreX.innerHTML = game.gameStats.XWins;
-    scoreO.innerHTML = game.gameStats.OWins;
-    scoreDraw.innerHTML = game.gameStats.Draws;
-
+    setScores();
     cpuFirstMove();
+});
+
+restartYesButton.addEventListener('click', () => {
+    restartGame();
+    cpuFirstMove();
+    banner.style.display = 'none';
+});
+
+restartNoButton.addEventListener('click', () => {
+    overlay.dataset.visible = 'false';
+    banner.style.display = 'none';
 });
 
 pannels.forEach((panel, index) => {
@@ -101,13 +113,13 @@ pannels.forEach((panel, index) => {
 
         game.board[Math.floor(index / 3)][index % 3] = game.currentPlayer;
         const result = game.checkWin();
-        console.log('Player result: ', result);
 
         if(result){
             setTimeout(() => {
                 winBanner(result);
             }, 500);
             game.updateScore();
+            setScores();
         } else {
             const player = game.togglePlayer();
             updateTurnInfo();
@@ -121,12 +133,13 @@ pannels.forEach((panel, index) => {
                 }, 500);
                 
                 const cpuResult = game.checkWin();
-                console.log('CPU result: ', cpuResult);
                 if(cpuResult){
                     setTimeout(() => {
                         winBanner(cpuResult);
+                        
                     }, 500);
                     game.updateScore();
+                    setScores();
                 }
             }
         }
@@ -134,25 +147,27 @@ pannels.forEach((panel, index) => {
 });
 
 function winBanner(result){
-    ovrerlay.dataset.visible = 'true';
+    overlay.dataset.visible = 'true';
     banner.style.display = 'flex';
+    bannerDecision.style.display = 'flex';
     if(result === 'Draw'){
         banner.querySelector('h3').textContent = "Round tied";
         banner.querySelector('h2').textContent = "No one wins!";
+        banner.querySelector('img').style.display = 'none';
     } else {
         banner.querySelector('h3').textContent = `Player ${result} wins!`;
-        banner.querySelector('h2').textContent = "takes the round!";
-        if(result === 'O' && oButton.dataset.selected === 'true'){
-            banner.querySelector('img').src = './assets/icon-o.svg';
+        if(result === 'O'){
+            bannerInfoImage.src = './assets/icon-o.svg';
         }else{
-            banner.querySelector('img').src  = './assets/icon-x.svg';        
+            bannerInfoImage.src  = './assets/icon-x.svg';        
         }
+        banner.querySelector('h2').textContent = "takes the round!";
     }
 }
 
 // TODO check this function
 function decisionBanner(decision){
-    ovrerlay.dataset.visible = 'true';
+    overlay.dataset.visible = 'true';
     banner.style.display = 'flex';
     if(decision === 'restart') {
         banner.querySelector('h3').style.display = 'none';
@@ -184,4 +199,33 @@ function cpuFirstMove(){
             updateTurnInfo();
         }, 500);
     }
+}
+
+function setScores(){
+    playerXScore.innerHTML = game.gameStats.XWins;
+    playerOScore.innerHTML = game.gameStats.OWins;
+    drawsScore.innerHTML = game.gameStats.Draws;
+}
+
+function setScoreLabels(){
+    if(game.isCPUPlaying){
+        playerXLabel.innerHTML = game.player === 'X' ? `${game.player} (YOU)` : `${game.cpu} (CPU)`;
+        playerOLabel.innerHTML = game.player === 'O' ? `${game.player} (YOU)` : `${game.cpu} (CPU)`;
+        return;
+    }else{
+        playerXLabel.innerHTML = game.player === 'X' ? `${game.player} (1st)` : `${game.player2} (2nd)`;
+        playerOLabel.innerHTML = game.player2 === 'O' ? `${game.player2} (2nd)` : `${game.player} (1st)`;
+        return;
+    }
+}
+
+function restartGame(){
+    game.sessionReset();
+    pannels.forEach(panel => {
+        panel.innerHTML = '';
+    });
+    banner.style.display = 'none';
+    overlay.dataset.visible = 'false';
+    bannerRestart.style.display = 'none';
+    playerTurnImage.src = './assets/icon-x.svg';
 }

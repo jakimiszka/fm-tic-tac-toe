@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="overlay" data-visible="false"></div>
+  <div class="overlay" id="overlay" data-visible="false"></div>
   <div class="banner">    
       <div class="banner--title">
         <h3>Round tied</h3>
@@ -27,8 +27,8 @@
         <button class="btn light-orange banner_next">Next round</button>
       </div>
       <div class="banner--restart">
-        <button class="btn light-white">No, cancel</button>
-        <button class="btn light-orange">Yes, restart</button>
+        <button class="btn light-white no">No, cancel</button>
+        <button class="btn light-orange yes">Yes, restart</button>
       </div> 
   </div>
   <div id="container">
@@ -75,7 +75,7 @@
             <h4>TURN</h4>
           </div>
           <div class="board--navigation__restart">
-            <button class="btn light-white" type="reset">
+            <button class="btn light-white" id="restartButton" type="reset">
               <img src="../assets/icon-restart.svg" alt="reset button"/>
             </button>
           </div>
@@ -95,17 +95,17 @@
           <div class="panel"></div>
         </div>
         <div class="board--results">
-          <div class="result dark-blue">
-            <p class="result--player">X (YOU)</p>
-            <p class="result--score firstPlayer">0</p>
+          <div class="result dark-blue" id="playerX">
+            <p class="result--player" id="playerX_label">X (YOU)</p>
+            <p class="result--score" id="playerX_score">0</p>
           </div>
-          <div class="result light-white">
+          <div class="result light-white" id="drwas">
             <p class="result--player">TIES</p>
-            <p class="result--score drawScore">0</p>
+            <p class="result--score drawScore" id="draws_score">0</p>
           </div>
-          <div class="result light-orange">
-            <p class="result--player">O (CPU)</p>
-            <p class="result--score secondPlayer">0</p>
+          <div class="result light-orange" id="playerO">
+            <p class="result--player" id="playerO_label">O (CPU)</p>
+            <p class="result--score" id="playerO_score">0</p>
           </div>
         </div>
       </div>

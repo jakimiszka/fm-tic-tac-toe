@@ -313,19 +313,32 @@ h3, h4 {
   gap: 1rem;
   margin-bottom: 1rem;
 }
-.banner--decision, .banner--restart {
+.banner--decision {
   width: 60%;
   display: flex;
   flex-direction: row;
   gap: 2rem;
 }
-.banner--decision button, .banner--restart button {
+.banner--decision button {
   width: 100%;
   height: auto;
   padding: 1rem;
 }
 .banner--restart {
+  width: 60%;
   display: none;
+  flex-direction: column;
+  gap: 2rem;
+}
+.banner--restart button {
+  width: 100%;
+  height: auto;
+  padding: 1rem;
+}
+@media (min-width: 820px) {
+  .banner--restart {
+    flex-direction: row;
+  }
 }
 
 .overlay {

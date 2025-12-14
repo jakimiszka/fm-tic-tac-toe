@@ -6,7 +6,8 @@ class Game{
             ['', '', '']
         ];
         this.currentPlayer = 'X';
-        this.player = '';
+        this.player = 'X';
+        this.player2 = 'O';
         this.cpu = '';
         this.isCPUPlaying = false;
         this.isGameOver = false;
@@ -17,9 +18,8 @@ class Game{
         };
     }
 
-    selectPlayer(symbol){
-        this.currentPlayer = symbol;
-    }
+    selectPlayer(symbol){this.player = symbol;}
+    selectPlayer2(symbol){this.player2 = symbol;}
 
     updateScore(){
         const winner = this.checkWin();
