@@ -14,3 +14,8 @@ $breakpoints: (
     @warn "Breakpoint '#{$name}' not found in \$breakpoints.";
   }
 }
+
+@mixin responsive-size($min-size, $max-size, $min-width: 480px, $max-width: 1024px) {
+  width: clamp(#{$min-size}, calc(#{$min-size} + (#{$max-size} - #{$min-size}) * (100vw - #{$min-width}) / (#{$max-width} - #{$min-width})), #{$max-size});
+  height: clamp(#{$min-size}, calc(#{$min-size} + (#{$max-size} - #{$min-size}) * (100vw - #{$min-width}) / (#{$max-width} - #{$min-width})), #{$max-size});
+}

@@ -18,6 +18,9 @@ const bannerDecision = banner.querySelector('.banner--decision');
 const bannerInfo = banner.querySelector('.banner--info');
 const bannerInfoImage = bannerInfo.querySelector('img');
 const bannerRestart = banner.querySelector('.banner--restart');
+const bannerH3 = banner.querySelector('h3');
+const bannerH2 = banner.querySelector('h2');
+const bannerImg = banner.querySelector('img');
 const restartYesButton = bannerRestart.querySelector('.yes');
 const restartNoButton = bannerRestart.querySelector('.no');
 const quitButton = bannerDecision.querySelector('.banner_quit');
@@ -38,19 +41,8 @@ const playerOScore = playerO.querySelector('#playerO_score');
 
 const game = new Game();
 
-xButton.addEventListener('click', () => {
-    xButton.dataset.selected ='true';
-    oButton.dataset.selected ='false';
-    game.selectPlayer('X');
-    game.selectPlayer2('O');
-});
-
-oButton.addEventListener('click', () => {
-    xButton.dataset.selected = 'false';
-    oButton.dataset.selected = 'true';
-    game.selectPlayer('O');
-    game.selectPlayer2('X');
-}); 
+xButton.addEventListener('click', () => selectMark('X'));
+oButton.addEventListener('click', () => selectMark('O')); 
 
 newGamePlayer.addEventListener('click', () => {
     menu.style.display = 'none';
@@ -58,7 +50,6 @@ newGamePlayer.addEventListener('click', () => {
 
     setScoreLabels();
     setScores();
-
     game.isCPUPlaying = false;
 });
 newGameCPU.addEventListener('click', () => {
@@ -81,7 +72,6 @@ restartButton.addEventListener('click', () => {
 
 nextRoundButton.addEventListener('click', () => {
     restartGame();
-
     setScores();
     cpuFirstMove();
 });
@@ -151,37 +141,36 @@ function winBanner(result){
     banner.style.display = 'flex';
     bannerDecision.style.display = 'flex';
     if(result === 'Draw'){
-        banner.querySelector('h3').textContent = "Round tied";
-        banner.querySelector('h2').textContent = "No one wins!";
-        banner.querySelector('img').style.display = 'none';
+        bannerH3.textContent = "Round tied";
+        bannerH2.textContent = "No one wins!";
+        bannerImg.style.display = 'none';
     } else {
-        banner.querySelector('h3').textContent = `Player ${result} wins!`;
+        bannerH3.textContent = `Player ${result} wins!`;
+        bannerH2.textContent = "takes the round!";
+        bannerImg.style.display = 'block'; // assuming it should be shown
         if(result === 'O'){
             bannerInfoImage.src = './assets/icon-o.svg';
         }else{
             bannerInfoImage.src  = './assets/icon-x.svg';        
         }
-        banner.querySelector('h2').textContent = "takes the round!";
+        
     }
 }
 
-// TODO check this function
 function decisionBanner(decision){
     overlay.dataset.visible = 'true';
     banner.style.display = 'flex';
+    bannerH2.textContent = "Start a new match?";
+    bannerImg.style.display = 'none';
     if(decision === 'restart') {
-        banner.querySelector('h3').style.display = 'none';
-        banner.querySelector('h2').textContent = "Start a new match?";
-        banner.querySelector('img').style.display = 'none';
+        bannerH3.style.display = 'none';
         bannerDecision.style.display = 'none';
         bannerRestart.style.display = 'flex';
-    }else{
-        banner.querySelector('h3').textContent = `New Game`;
-        banner.querySelector('h2').textContent = "Start a new match?";
-        banner.querySelector('img').style.display = 'none';
+    } else {
+        bannerH3.textContent = 'New Game';
         bannerDecision.style.display = 'flex';
         bannerRestart.style.display = 'none';
-    }   
+    }
 }
 
 function updateTurnInfo(){
@@ -228,4 +217,18 @@ function restartGame(){
     overlay.dataset.visible = 'false';
     bannerRestart.style.display = 'none';
     playerTurnImage.src = './assets/icon-x.svg';
+}
+
+function selectMark(mark) {
+    if (mark === 'X') {
+        xButton.dataset.selected = 'true';
+        oButton.dataset.selected = 'false';
+        game.selectPlayer('X');
+        game.selectPlayer2('O');
+    } else {
+        xButton.dataset.selected = 'false';
+        oButton.dataset.selected = 'true';
+        game.selectPlayer('O');
+        game.selectPlayer2('X');
+    }
 }

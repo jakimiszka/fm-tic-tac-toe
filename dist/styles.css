@@ -282,6 +282,10 @@ h3, h4 {
   box-shadow: 0 10px 0 0 var(--grey-shadow);
   border-radius: 10px;
 }
+.panel img {
+  width: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
+  height: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
+}
 
 .result {
   width: 100%;
@@ -290,6 +294,7 @@ h3, h4 {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   color: var(--grey-dark);
   border-radius: 10px;
   padding: 0.8rem;
@@ -316,13 +321,18 @@ h3, h4 {
 .banner--decision {
   width: 60%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 2rem;
 }
 .banner--decision button {
   width: 100%;
   height: auto;
   padding: 1rem;
+}
+@media (min-width: 820px) {
+  .banner--decision {
+    flex-direction: row;
+  }
 }
 .banner--restart {
   width: 60%;
