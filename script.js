@@ -92,62 +92,7 @@ restartNoButton.addEventListener('click', () => {
 });
 
 pannels.forEach((panel, index) => {
-    panel.addEventListener('click', () => {
-        if(game.isGameOver || game.board[Math.floor(index / 3)][index % 3] !== ''){
-            return;
-        }
-        if(game.isCPUPlaying && game.currentPlayer === game.cpu){
-            return;
-        }
-        const currentPlayer = game.currentPlayer;
-        if(currentPlayer === 'O')
-            panel.innerHTML = `<img src="${oMark}" alt="O Mark">`;
-        if(currentPlayer === 'X')
-            panel.innerHTML = `<img src="${xMark}" alt="X Mark">`;
-
-        game.board[Math.floor(index / 3)][index % 3] = game.currentPlayer;
-        const result = game.checkWin();
-        if(!!result && !!result.winner && !!result.winningPanels){
-            result.winningPanels.forEach(panel => {
-                if(result.winner === 'X')
-                    pannels[panel.row * 3 + panel.col].classList.add('winXPannel');
-                    pannels[panel.row * 3 + panel.col].querySelector('img').style.filter = 'var(--mark-win)';
-                if(result.winner === 'O')
-                    pannels[panel.row * 3 + panel.col].classList.add('winOPannel');
-                    pannels[panel.row * 3 + panel.col].querySelector('img').style.filter = 'var(--mark-win)';
-            });
-        }
-
-        if(!!result && (!!result.winner || result === 'Draw')){
-            setTimeout(() => {
-                winBanner(result.winner ? result.winner : 'Draw');
-            }, 500);
-            game.updateScore();
-            setScores();
-        } else {
-            const player = game.togglePlayer();
-            updateTurnInfo();
-
-            if(game.isCPUPlaying && player === game.cpu){
-                const cpu = game.cpuMove();
-                setTimeout(() => {
-                    updatePannelImage(cpu);
-                    game.togglePlayer();
-                    updateTurnInfo();
-                }, 500);
-                
-                const cpuResult = game.checkWin();
-                if(!!cpuResult && (!!cpuResult.winner || cpuResult === 'Draw')){
-                    setTimeout(() => {
-                        winBanner(cpuResult.winner ? cpuResult.winner : 'Draw');
-                        
-                    }, 500);
-                    game.updateScore();
-                    setScores();
-                }
-            }
-        }
-    });
+    panel.addEventListener('click', () => handlePanelClick(panel, index));
 });
 
 function winBanner(result){
@@ -161,7 +106,7 @@ function winBanner(result){
     } else {
         bannerH3.textContent = `Player ${result} wins!`;
         bannerH2.textContent = "takes the round!";
-        bannerImg.style.display = 'block'; // assuming it should be shown
+        bannerImg.style.display = 'block';
         if(result === 'O'){
             bannerInfoImage.src = './assets/icon-o.svg';
         }else{
@@ -251,8 +196,72 @@ function restorePannels(){
     pannels.forEach(panel => {
         panel.classList.remove('winOPannel');
         panel.classList.remove('winXPannel');
-        if(panel.querySelector('img')){
-            panel.querySelector('img').style.filter = '';
+        const img = panel.querySelector('img');
+        if(img){
+            img.style.filter = '';
         }
     });
+}
+
+function handlePanelClick(panel, index) {
+    if (game.isGameOver || game.board[Math.floor(index / 3)][index % 3] !== '') {
+        return;
+    }
+    if (game.isCPUPlaying && game.currentPlayer === game.cpu) {
+        return;
+    }
+
+    // Place player's mark
+    const currentPlayer = game.currentPlayer;
+    panel.innerHTML = currentPlayer === 'O' ? `<img src="${oMark}" alt="O Mark">` : `<img src="${xMark}" alt="X Mark">`;
+    game.board[Math.floor(index / 3)][index % 3] = currentPlayer;
+
+    const result = game.checkWin();
+    if (result && result.winner && result.winningPanels) {
+        // Highlight winning panels
+        result.winningPanels.forEach(p => {
+            const panelElement = pannels[p.row * 3 + p.col];
+            const img = panelElement.querySelector('img');
+            if (result.winner === 'X') {
+                panelElement.classList.add('winXPannel');
+                console.log(img);
+                if (img) img.style.filter = 'var(--mark-win)';
+            } else if (result.winner === 'O') {
+                panelElement.classList.add('winOPannel');
+                if (img) img.style.filter = 'var(--mark-win)';
+            }
+        });
+    }
+
+    if (result && (result.winner || result === 'Draw')) {
+        // Game over
+        setTimeout(() => {
+            winBanner(result.winner || 'Draw');
+        }, 500);
+        game.updateScore();
+        setScores();
+    } else {
+        // Continue game
+        game.togglePlayer();
+        updateTurnInfo();
+
+        if (game.isCPUPlaying && game.currentPlayer === game.cpu) {
+            // CPU move
+            setTimeout(() => {
+                const cpu = game.cpuMove();
+                updatePannelImage(cpu);
+                game.togglePlayer();
+                updateTurnInfo();
+
+                const cpuResult = game.checkWin();
+                if (cpuResult && (cpuResult.winner || cpuResult === 'Draw')) {
+                    setTimeout(() => {
+                        winBanner(cpuResult.winner || 'Draw');
+                    }, 500);
+                    game.updateScore();
+                    setScores();
+                }
+            }, 500);
+        }
+    }
 }
