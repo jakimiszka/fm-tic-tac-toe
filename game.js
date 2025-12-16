@@ -73,7 +73,11 @@ class Game{
         for(let row of this.board){
             if(row[0] !== '' && row[0] === row[1] && row[1] === row[2]){
                 this.isGameOver = true;
-                return row[0];
+                return {winner: row[0], winningPanels: [
+                    {row: this.board.indexOf(row), col: 0},
+                    {row: this.board.indexOf(row), col: 1},
+                    {row: this.board.indexOf(row), col: 2}
+                ]};
             }
         }
 
@@ -81,18 +85,30 @@ class Game{
         for(let col = 0; col < 3; col++){
             if(this.board[0][col] !== '' && this.board[0][col] === this.board[1][col] && this.board[1][col] === this.board[2][col]){
                 this.isGameOver = true;
-                return this.board[0][col];
+                return {winner: this.board[0][col], winningPanels: [
+                    {row: 0, col},
+                    {row: 1, col},
+                    {row: 2, col}
+                ]};
             }
         }
 
         // Check diagonals
         if(this.board[0][0] !== '' && this.board[0][0] === this.board[1][1] && this.board[1][1] === this.board[2][2]){
             this.isGameOver = true;
-            return this.board[0][0];
+            return {winner: this.board[0][0], winningPanels: [
+                {row: 0, col: 0},
+                {row: 1, col: 1},
+                {row: 2, col: 2}
+            ]};
         }
         if(this.board[0][2] !== '' && this.board[0][2] === this.board[1][1] && this.board[1][1] === this.board[2][0]){
             this.isGameOver = true;
-            return this.board[0][2];
+            return {winner: this.board[0][2], winningPanels: [
+                {row: 0, col: 2},
+                {row: 1, col: 1},
+                {row: 2, col: 0}
+            ]}; 
         }
 
         // Check for draw

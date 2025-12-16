@@ -1,5 +1,5 @@
 :root{
-    --grey-dark: hsl(202, 32%, 15%);
+    --grey-dark: rgb(26, 42, 50);
     --grey-light: hsl(199, 35%, 19%);
     --blue-dark: hsl(178, 60%, 48%);  
     --blue-light: hsl(178, 75%, 65%);
@@ -12,6 +12,8 @@
     --grey-shadow: #10212A;
     --blue-shadow: #118C87;
     --white-shadow: #6B8997;
+
+    --mark-win: brightness(0) saturate(100%) invert(11%) sepia(5%) saturate(5246%) hue-rotate(157deg) brightness(88%) contrast(86%);
 
     [data-selected='true']{
         --selected-background: var(--white-dark);

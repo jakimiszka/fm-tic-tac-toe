@@ -38,7 +38,7 @@ ul {
 }
 
 :root {
-  --grey-dark: hsl(202, 32%, 15%);
+  --grey-dark: rgb(26, 42, 50);
   --grey-light: hsl(199, 35%, 19%);
   --blue-dark: hsl(178, 60%, 48%);
   --blue-light: hsl(178, 75%, 65%);
@@ -50,6 +50,7 @@ ul {
   --grey-shadow: #10212A;
   --blue-shadow: #118C87;
   --white-shadow: #6B8997;
+  --mark-win: brightness(0) saturate(100%) invert(11%) sepia(5%) saturate(5246%) hue-rotate(157deg) brightness(88%) contrast(86%);
   --font-size-1: 9rem;
   --font-size-2: 4rem;
   --font-size-3: 3rem;
@@ -242,12 +243,16 @@ h3, h4 {
   justify-content: center;
   width: 100%;
   height: 100%;
+  gap: 0.5rem;
+  background-color: var(--grey-light);
+  box-shadow: 0 5px 0 0 var(--grey-shadow);
+  border-radius: 10px;
+  padding: 0.5rem;
 }
 .board--navigation__turn--image img {
-  width: 80%;
-  height: 80%;
-  min-width: 25px;
-  min-height: 25px;
+  filter: brightness(0) saturate(100%) invert(79%) sepia(8%) saturate(1029%) hue-rotate(157deg) brightness(91%) contrast(86%);
+  width: clamp(24px, 8vw, 58px);
+  height: clamp(24px, 8vw, 58px);
 }
 .board--navigation__turn h4 {
   padding: 0;
@@ -264,8 +269,7 @@ h3, h4 {
   width: 100%;
   height: auto;
   aspect-ratio: 1;
-  gap: 1rem;
-  gap: clamp(8px, -4px + 4vw, 16px);
+  gap: clamp(16px, -4px + 4vw, 28px);
 }
 .board--results {
   display: grid;
@@ -285,6 +289,16 @@ h3, h4 {
 .panel img {
   width: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
   height: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
+}
+
+.winXPannel {
+  background-color: var(--blue-dark);
+  box-shadow: 0 10px 0 0 var(--blue-shadow);
+}
+
+.winOPannel {
+  background-color: var(--orange-dark);
+  box-shadow: 0 10px 0 0 var(--orange-shadow);
 }
 
 .result {

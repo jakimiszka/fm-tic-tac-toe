@@ -11,6 +11,8 @@ const xButton = menuTurn.querySelector('.menu--turn__mark--x');
 const oButton = menuTurn.querySelector('.menu--turn__mark--o');
 const oMark = './assets/icon-o.svg';
 const xMark = './assets/icon-x.svg';
+const oMarkOutline = './assets/icon-o-outline.svg';
+const xMarkOutline = './assets/icon-x-outline.svg';
 const newGameCPU = menu.querySelector('#newGameCPU');
 const newGamePlayer = menu.querySelector('#newGamePlayer');
 // BANNER - elements
@@ -71,12 +73,14 @@ restartButton.addEventListener('click', () => {
 });
 
 nextRoundButton.addEventListener('click', () => {
+    restorePannels();
     restartGame();
     setScores();
     cpuFirstMove();
 });
 
 restartYesButton.addEventListener('click', () => {
+    restorePannels();
     restartGame();
     cpuFirstMove();
     banner.style.display = 'none';
@@ -103,10 +107,20 @@ pannels.forEach((panel, index) => {
 
         game.board[Math.floor(index / 3)][index % 3] = game.currentPlayer;
         const result = game.checkWin();
+        if(!!result && !!result.winner && !!result.winningPanels){
+            result.winningPanels.forEach(panel => {
+                if(result.winner === 'X')
+                    pannels[panel.row * 3 + panel.col].classList.add('winXPannel');
+                    pannels[panel.row * 3 + panel.col].querySelector('img').style.filter = 'var(--mark-win)';
+                if(result.winner === 'O')
+                    pannels[panel.row * 3 + panel.col].classList.add('winOPannel');
+                    pannels[panel.row * 3 + panel.col].querySelector('img').style.filter = 'var(--mark-win)';
+            });
+        }
 
-        if(result){
+        if(!!result && (!!result.winner || result === 'Draw')){
             setTimeout(() => {
-                winBanner(result);
+                winBanner(result.winner ? result.winner : 'Draw');
             }, 500);
             game.updateScore();
             setScores();
@@ -123,9 +137,9 @@ pannels.forEach((panel, index) => {
                 }, 500);
                 
                 const cpuResult = game.checkWin();
-                if(cpuResult){
+                if(!!cpuResult && (!!cpuResult.winner || cpuResult === 'Draw')){
                     setTimeout(() => {
-                        winBanner(cpuResult);
+                        winBanner(cpuResult.winner ? cpuResult.winner : 'Draw');
                         
                     }, 500);
                     game.updateScore();
@@ -174,7 +188,7 @@ function decisionBanner(decision){
 }
 
 function updateTurnInfo(){
-    game.currentPlayer === 'O' ? playerTurnImage.src = './assets/icon-o.svg' : playerTurnImage.src = './assets/icon-x.svg';
+    game.currentPlayer === 'O' ? playerTurnImage.src = oMarkOutline: playerTurnImage.src = xMarkOutline;
 }
 function updatePannelImage(cpu){
     pannels[cpu.row * 3 + cpu.col].innerHTML = cpu.mark === 'O' ? `<img src="${oMark}" alt="O Mark">` : `<img src="${xMark}" alt="X Mark">`;
@@ -216,7 +230,7 @@ function restartGame(){
     banner.style.display = 'none';
     overlay.dataset.visible = 'false';
     bannerRestart.style.display = 'none';
-    playerTurnImage.src = './assets/icon-x.svg';
+    playerTurnImage.src = xMarkOutline;
 }
 
 function selectMark(mark) {
@@ -231,4 +245,14 @@ function selectMark(mark) {
         game.selectPlayer('O');
         game.selectPlayer2('X');
     }
+}
+
+function restorePannels(){
+    pannels.forEach(panel => {
+        panel.classList.remove('winOPannel');
+        panel.classList.remove('winXPannel');
+        if(panel.querySelector('img')){
+            panel.querySelector('img').style.filter = '';
+        }
+    });
 }
