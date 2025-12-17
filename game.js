@@ -23,9 +23,9 @@ class Game{
 
     updateScore(){
         const winner = this.checkWin();
-        if(winner === 'X'){
+        if(winner.winner === 'X'){
             this.gameStats.XWins += 1;
-        } else if(winner === 'O'){
+        } else if(winner.winner === 'O'){
             this.gameStats.OWins += 1;
         } else if(winner === 'Draw'){
             this.gameStats.Draws += 1;

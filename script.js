@@ -93,7 +93,9 @@ restartNoButton.addEventListener('click', () => {
 
 pannels.forEach((panel, index) => {
     panel.addEventListener('click', () => handlePanelClick(panel, index));
-});
+    panel.addEventListener('mouseover', () => handlePanelMouseOver(panel, index));
+    panel.addEventListener('mouseout', () => handlePanelMouseOut(panel, index));
+}); 
 
 function winBanner(result){
     overlay.dataset.visible = 'true';
@@ -112,7 +114,6 @@ function winBanner(result){
         }else{
             bannerInfoImage.src  = './assets/icon-x.svg';        
         }
-        
     }
 }
 
@@ -200,10 +201,46 @@ function restorePannels(){
         if(img){
             img.style.filter = '';
         }
+        panel.style.backgroundImage = '';
     });
 }
 
+function colorWinningPanels(winningPanels, winner){
+    winningPanels.forEach(p => {
+        const panelElement = pannels[p.row * 3 + p.col];
+        const img = panelElement.querySelector('img');
+         if (img) img.style.filter = 'var(--mark-win)';
+        if(winner === 'X'){
+            panelElement.classList.add('winXPannel');
+        } else if(winner === 'O'){
+            panelElement.classList.add('winOPannel');
+        }
+    });
+}
+
+function handlePanelMouseOver(panel, index) {
+    if (game.isGameOver || game.board[Math.floor(index / 3)][index % 3] !== '') {
+            return;
+        }
+        if (game.isCPUPlaying && game.currentPlayer === game.cpu) {
+            return;
+        }
+        const currentPlayer = game.currentPlayer;
+        const outlineSrc = currentPlayer === 'O' ? oMarkOutline : xMarkOutline;
+        panel.style.backgroundImage = `url(${outlineSrc})`;
+        panel.style.backgroundRepeat = 'no-repeat';
+        panel.style.backgroundPosition = 'center';
+}
+
+function handlePanelMouseOut(panel, index) {
+    if (game.isGameOver || game.board[Math.floor(index / 3)][index % 3] !== '') {
+            return;
+        }
+        panel.style.backgroundImage = '';
+}
+
 function handlePanelClick(panel, index) {
+    panel.classList.remove('preview');
     if (game.isGameOver || game.board[Math.floor(index / 3)][index % 3] !== '') {
         return;
     }
@@ -219,18 +256,7 @@ function handlePanelClick(panel, index) {
     const result = game.checkWin();
     if (result && result.winner && result.winningPanels) {
         // Highlight winning panels
-        result.winningPanels.forEach(p => {
-            const panelElement = pannels[p.row * 3 + p.col];
-            const img = panelElement.querySelector('img');
-            if (result.winner === 'X') {
-                panelElement.classList.add('winXPannel');
-                console.log(img);
-                if (img) img.style.filter = 'var(--mark-win)';
-            } else if (result.winner === 'O') {
-                panelElement.classList.add('winOPannel');
-                if (img) img.style.filter = 'var(--mark-win)';
-            }
-        });
+        colorWinningPanels(result.winningPanels, result.winner);
     }
 
     if (result && (result.winner || result === 'Draw')) {

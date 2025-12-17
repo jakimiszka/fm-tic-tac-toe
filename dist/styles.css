@@ -154,8 +154,8 @@ h3, h4 {
   padding: 0.5rem;
 }
 .menu--logo--x img, .menu--logo--o img {
-  width: 40px;
-  height: 40px;
+  width: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
+  height: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
 }
 .menu--decision {
   width: 100%;
@@ -191,8 +191,8 @@ h3, h4 {
   padding: 0.5rem;
 }
 .menu--turn__mark--x img, .menu--turn__mark--o img {
-  width: 40px;
-  height: 40px;
+  width: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
+  height: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
 }
 .menu--turn__mark--x {
   border-radius: 10px;
@@ -282,13 +282,21 @@ h3, h4 {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: var(--grey-light);
+  background-color: hsla(199, 35%, 19%, 0.8);
   box-shadow: 0 10px 0 0 var(--grey-shadow);
   border-radius: 10px;
 }
 .panel img {
   width: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
   height: clamp(34px, 34px + (64px - 34px) * (100vw - 480px) / (1024px - 480px), 64px);
+  transition: transform 0.2s ease;
+}
+.panel:hover {
+  cursor: pointer;
+  transform: scale(1.05);
+}
+.panel img:hover {
+  transform: scale(1.1);
 }
 
 .winXPannel {
@@ -313,6 +321,11 @@ h3, h4 {
   border-radius: 10px;
   padding: 0.8rem;
 }
+.result--score {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
 .banner {
   position: absolute;
   display: none;
